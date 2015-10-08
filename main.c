@@ -81,8 +81,8 @@ int main(void)
       while(1); // do not load, trap CPU!!
   }
   DCOCTL = 0; // Select lowest DCOx and MODx settings
-  BCSCTL1 = CALBC1_16MHZ; // Set range
-  DCOCTL = CALDCO_16MHZ;
+  BCSCTL1 = CALBC1_1MHZ; // Set range
+  DCOCTL = CALDCO_1MHZ;
   BCSCTL2 = 0; /* set DIVSx to 0, to divide SMCLK by 1. set SELS to 0, to select DCOCLK for SMCLK.
                     * set DIVMx to 0 to divide MCLK by 1. set SELMCLK to 0 to select DCOCLK for MCLK. */
 
@@ -96,6 +96,10 @@ int main(void)
   TACTL = TASSEL_2 + MC_1;// + TAIE;
   TACCR0 = 320;
 
+  P1DIR |= BIT4;
+
+  P1SEL2 &= ~BIT0;
+
   __enable_interrupt();
 
   //s_BIS_SR(LPM0_bits + GIE);                 // Enter LPM0 w/ interrupt
@@ -106,18 +110,21 @@ int main(void)
 __interrupt void Timer_A (void)
 {
 	int signal;
-    P1DIR = 0;
+	P1SEL |= BIT4;
+
+    P1DIR &= ~BIT0;
     signal = P1IN & BIT0;
 
   if(signal) {
-	  P1DIR = 1;
-	  P1OUT = 0;
-	  TACCR0 = 480;
+	  P1DIR |= BIT0;
+	  P1OUT &= ~BIT0;
+	  TACCR0 = 60;
   }
   else {
-	  P1DIR = 1;
-	  P1OUT = 1;
-	  TACCR0 = 160;
+	  P1DIR |= BIT0;
+	  P1OUT |= BIT0;
+	  TACCR0 = 60;
   }
-  //CCR0 += 50000;                            // Add Offset to CCR0
+
+  P1SEL &= ~BIT4;
 }
