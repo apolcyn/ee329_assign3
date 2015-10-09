@@ -66,6 +66,8 @@
 //   Built with CCS Version 4.2.0 and IAR Embedded Workbench Version: 5.10
 //******************************************************************************
 
+int counter = 0;
+
 #include <msp430.h>
 
 int main(void)
@@ -93,12 +95,14 @@ int main(void)
 
   // set TACTL, timer A control register to set IDx - set divider to 1, MCx, set mode to 1,
   //   TAIE to 1 to enable interrupts on TAIFG, which occur when counter goes back to 0.
-  TACTL = TASSEL_2 + MC_1;// + TAIE;
-  TACCR0 = 320;
+ // TACTL = TASSEL_2 + MC_1;// + TAIE;
+ // TACCR0 = 50000;
+  P1SEL |= BIT0;
+  P1DIR |= BIT0;
 
-  P1DIR |= BIT4;
+ // P1DIR |= BIT4;
 
-  P1SEL2 &= ~BIT0;
+  //P1SEL2 &= ~BIT0;
 
   __enable_interrupt();
 
@@ -110,21 +114,23 @@ int main(void)
 __interrupt void Timer_A (void)
 {
 	int signal;
-	P1SEL |= BIT4;
 
-    P1DIR &= ~BIT0;
-    signal = P1IN & BIT0;
+	if(++counter == 50) {
+		counter = 0;
 
-  if(signal) {
-	  P1DIR |= BIT0;
-	  P1OUT &= ~BIT0;
-	  TACCR0 = 60;
-  }
-  else {
-	  P1DIR |= BIT0;
-	  P1OUT |= BIT0;
-	  TACCR0 = 60;
-  }
+		P1DIR &= ~BIT0;
+		    signal = P1IN & BIT0;
 
-  P1SEL &= ~BIT4;
+		  if(signal) {
+			  P1DIR |= BIT0;
+			  P1OUT &= ~BIT0;
+		  }
+		  else {
+			  P1DIR |= BIT0;
+			  P1OUT |= BIT0;
+		  }
+	}
+	//P1SEL |= BIT4;
+
+  //P1SEL &= ~BIT4; */
 }
