@@ -95,8 +95,8 @@ int main(void)
 
   // set TACTL, timer A control register to set IDx - set divider to 1, MCx, set mode to 1,
   //   TAIE to 1 to enable interrupts on TAIFG, which occur when counter goes back to 0.
- // TACTL = TASSEL_2 + MC_1;// + TAIE;
- // TACCR0 = 50000;
+  TACTL = TASSEL_2 + MC_1;// + TAIE;
+  TACCR0 = 50000;
   P1SEL |= BIT0;
   P1DIR |= BIT0;
 
