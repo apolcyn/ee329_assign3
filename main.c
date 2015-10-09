@@ -97,7 +97,7 @@ int main(void)
   //   TAIE to 1 to enable interrupts on TAIFG, which occur when counter goes back to 0.
   TACTL = TASSEL_2 + MC_1;// + TAIE;
   TACCR0 = 50000;
-  P1SEL |= BIT0;
+  //P1SEL |= BIT0;
   P1DIR |= BIT0;
 
  // P1DIR |= BIT4;
@@ -113,15 +113,10 @@ int main(void)
 #pragma vector=TIMER0_A0_VECTOR
 __interrupt void Timer_A (void)
 {
-	int signal;
-
 	if(++counter == 50) {
 		counter = 0;
 
-		P1DIR &= ~BIT0;
-		    signal = P1IN & BIT0;
-
-		  if(signal) {
+		  if(P1OUT & BIT0) {
 			  P1DIR |= BIT0;
 			  P1OUT &= ~BIT0;
 		  }
